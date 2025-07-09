@@ -19,6 +19,7 @@
             <tr>
                 <th>ID</th>
                 <th>ユーザー名</th>
+                <th>デフォルト</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -27,6 +28,15 @@
             <tr>
                 <td>{{.ID}}</td>
                 <td>{{.Name}}</td>
+                <td>
+                    {{if .IsDefault}}
+                        (デフォルト)
+                    {{else}}
+                        <form action="/settings/users/{{.ID}}/set_default" method="POST" style="display:inline;">
+                            <button type="submit">デフォルトに設定</button>
+                        </form>
+                    {{end}}
+                </td>
                 <td>
                     <form action="/settings/users/{{.ID}}" method="POST" onsubmit="return confirm('本当にユーザー {{.Name}} を削除しますか？');" style="display:inline;">
                         <input type="hidden" name="_method" value="DELETE">

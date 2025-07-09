@@ -47,14 +47,20 @@
         <label>年齢・成体/幼体:</label><br>
         <input type="text" name="age" value="{{.SearchParams.Age}}"><br>
 
-        <label>採集年月日:</label><br>
-        <input type="text" name="date" value="{{.SearchParams.Date}}"><br>
+        <label>採集年月日 (開始):</label><br>
+        <input type="date" name="date_start" value="{{.SearchParams.DateStart}}"><br>
+        <label>採集年月日 (終了):</label><br>
+        <input type="date" name="date_end" value="{{.SearchParams.DateEnd}}"><br>
 
-        <label>標本作成日:</label><br>
-        <input type="text" name="specimen_creation_date" value="{{.SearchParams.SpecimenCreationDate}}"><br>
+        <label>標本作成日 (開始):</label><br>
+        <input type="date" name="specimen_creation_date_start" value="{{.SearchParams.SpecimenCreationDateStart}}"><br>
+        <label>標本作成日 (終了):</label><br>
+        <input type="date" name="specimen_creation_date_end" value="{{.SearchParams.SpecimenCreationDateEnd}}"><br>
 
-        <label>データ入力日:</label><br>
-        <input type="text" name="data_input_date" value="{{.SearchParams.DataInputDate}}"><br>
+        <label>データ入力日 (開始):</label><br>
+        <input type="date" name="data_input_date_start" value="{{.SearchParams.DataInputDateStart}}"><br>
+        <label>データ入力日 (終了):</label><br>
+        <input type="date" name="data_input_date_end" value="{{.SearchParams.DataInputDateEnd}}"><br>
 
         <input type="submit" value="検索">
         <a href="/specimens">検索条件をクリア</a>

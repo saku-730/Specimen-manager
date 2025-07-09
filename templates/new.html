@@ -5,6 +5,7 @@
 </head>
 <body>
     <h1>標本データ入力</h1>
+    <input type="checkbox" id="continuousInputMode"> <label for="continuousInputMode">連続入力モード</label>
     <form action="/specimens" method="POST" enctype="multipart/form-data" id="specimenForm">
         <h2>共通</h2>
         <label>雌雄:</label><br>
@@ -14,19 +15,23 @@
         <label>和名:</label><br>
         <input type="text" name="JapaneseName"><br>
         <label>年齢・成体/幼体:</label><br>
-        <input type="text" name="Age"><br>
+        <input type="text" name="Age" list="ageOptions"><br>
+        <datalist id="ageOptions">
+            <option value="成体">
+            <option value="幼体">
+        </datalist><br>
         <label>同定者:</label><br>
         <select name="Identifier">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if and $.DefaultUser (eq .Name $.DefaultUser.Name)}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
         <label>プロジェクト名:</label><br>
         <select name="ProjectName">
             <option value=""></option>
             {{range .Projects}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if and $.DefaultProject (eq .Name $.DefaultProject.Name)}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
         <label>データ入力日:</label><br>
@@ -49,7 +54,7 @@
         <select name="Collector">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if and $.DefaultUser (eq .Name $.DefaultUser.Name)}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
         <label>個体数:</label><br>
@@ -73,7 +78,7 @@
             <select name="SpecimenCreator">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if and $.DefaultUser (eq .Name $.DefaultUser.Name)}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
             <label>標本種類:</label><br>
@@ -146,6 +151,51 @@
                     specimenSection.style.display = this.checked ? 'block' : 'none';
                 });
             }
+
+            // 連続入力モードのロジック
+            const continuousInputModeCheckbox = document.getElementById('continuousInputMode');
+            const fieldsToRetain = [
+                'Identifier', 'ProjectName', 'Latitude', 'Longitude', 
+                'Date', 'DataInputDate', 'Collector', 'SpecimenCreator'
+            ];
+
+            // チェックボックスの状態をlocalStorageから復元
+            const continuousModeKey = 'continuousInputModeChecked';
+            if (localStorage.getItem(continuousModeKey) === 'true') {
+                continuousInputModeCheckbox.checked = true;
+            }
+
+            // ページロード時に値をロード (チェックボックスの状態に依存)
+            if (continuousInputModeCheckbox.checked) {
+                fieldsToRetain.forEach(fieldName => {
+                    const field = document.querySelector(`[name="${fieldName}"]`);
+                    if (field && localStorage.getItem(`continuousInput_${fieldName}`)) {
+                        field.value = localStorage.getItem(`continuousInput_${fieldName}`);
+                    }
+                });
+            }
+
+            // チェックボックスの状態をlocalStorageに保存
+            continuousInputModeCheckbox.addEventListener('change', function() {
+                localStorage.setItem(continuousModeKey, this.checked);
+            });
+
+            // フォーム送信時に値を保存
+            document.getElementById('specimenForm').addEventListener('submit', function(event) {
+                if (continuousInputModeCheckbox.checked) {
+                    fieldsToRetain.forEach(fieldName => {
+                        const field = document.querySelector(`[name="${fieldName}"]`);
+                        if (field) {
+                            localStorage.setItem(`continuousInput_${fieldName}`, field.value);
+                        }
+                    });
+                } else {
+                    // 連続入力モードでない場合は保存された値をクリア
+                    fieldsToRetain.forEach(fieldName => {
+                        localStorage.removeItem(`continuousInput_${fieldName}`);
+                    });
+                }
+            });
 
             // Enterキーの処理
             const form = document.getElementById('specimenForm');

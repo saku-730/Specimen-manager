@@ -76,6 +76,24 @@ func GetProjectsList(db *gorm.DB) []models.Project {
 	return getProjects(db)
 }
 
+// GetDefaultProject はデフォルトプロジェクトを返します。見つからない場合はnilを返します。
+func GetDefaultProject(db *gorm.DB) *models.Project {
+	var project models.Project
+	if err := db.Where("is_default = ?", true).First(&project).Error; err != nil {
+		return nil // デフォルトプロジェクトが見つからない場合
+	}
+	return &project
+}
+
+// GetDefaultUser はデフォルトユーザーを返します。見つからない場合はnilを返します。
+func GetDefaultUser(db *gorm.DB) *models.User {
+	var user models.User
+	if err := db.Where("is_default = ?", true).First(&user).Error; err != nil {
+		return nil // デフォルトユーザーが見つからない場合
+	}
+	return &user
+}
+
 func CreateSpecimen(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -173,9 +191,12 @@ func GetSpecimens(c *gin.Context) {
 		SpecimenType       string `form:"specimen_type"`
 		Sex                string `form:"sex"`
 		Age                string `form:"age"`
-		Date               string `form:"date"`
-		SpecimenCreationDate string `form:"specimen_creation_date"`
-		DataInputDate      string `form:"data_input_date"`
+		DateStart          string `form:"date_start"`
+		DateEnd            string `form:"date_end"`
+		SpecimenCreationDateStart string `form:"specimen_creation_date_start"`
+		SpecimenCreationDateEnd string `form:"specimen_creation_date_end"`
+		DataInputDateStart string `form:"data_input_date_start"`
+		DataInputDateEnd   string `form:"data_input_date_end"`
 	}
 
 	if err := c.ShouldBindQuery(&searchParams); err != nil {
@@ -229,15 +250,24 @@ func GetSpecimens(c *gin.Context) {
 		query = query.Where("age LIKE ?", "%"+searchParams.Age+"%")
 	}
 
-	// 日付検索は文字列として受け取り、データベースの形式に合わせる
-	if searchParams.Date != "" {
-		query = query.Where("date LIKE ?", "%"+searchParams.Date+"%")
+	// 日付範囲検索
+	if searchParams.DateStart != "" {
+		query = query.Where("date >= ?", searchParams.DateStart)
 	}
-	if searchParams.SpecimenCreationDate != "" {
-		query = query.Where("specimen_creation_date LIKE ?", "%"+searchParams.SpecimenCreationDate+"%")
+	if searchParams.DateEnd != "" {
+		query = query.Where("date <= ?", searchParams.DateEnd)
 	}
-	if searchParams.DataInputDate != "" {
-		query = query.Where("data_input_date LIKE ?", "%"+searchParams.DataInputDate+"%")
+	if searchParams.SpecimenCreationDateStart != "" {
+		query = query.Where("specimen_creation_date >= ?", searchParams.SpecimenCreationDateStart)
+	}
+	if searchParams.SpecimenCreationDateEnd != "" {
+		query = query.Where("specimen_creation_date <= ?", searchParams.SpecimenCreationDateEnd)
+	}
+	if searchParams.DataInputDateStart != "" {
+		query = query.Where("data_input_date >= ?", searchParams.DataInputDateStart)
+	}
+	if searchParams.DataInputDateEnd != "" {
+		query = query.Where("data_input_date <= ?", searchParams.DataInputDateEnd)
 	}
 
 	var specimens []models.Specimen

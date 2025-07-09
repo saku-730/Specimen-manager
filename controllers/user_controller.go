@@ -55,3 +55,46 @@ func DeleteUser(c *gin.Context) {
 
 	c.Redirect(http.StatusFound, "/settings/users")
 }
+
+// SetDefaultUser は指定されたユーザーをデフォルトに設定し、他のユーザーのデフォルト設定を解除します
+func SetDefaultUser(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	id := c.Param("id") // デフォルトに設定するユーザーのID
+
+	// トランザクションを開始
+	tx := db.Begin()
+	if tx.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start transaction"})
+		return
+	}
+
+	// 既存のすべてのユーザーのIsDefaultをfalseに設定
+	if err := tx.Model(&models.User{}).Where("is_default = ?", true).Update("is_default", false).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to reset default users"})
+		return
+	}
+
+	// 指定されたユーザーのIsDefaultをtrueに設定
+	var user models.User
+	if err := tx.First(&user, id).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	user.IsDefault = true
+	if err := tx.Save(&user).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set default user"})
+		return
+	}
+
+	// トランザクションをコミット
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
+		return
+	}
+
+	c.Redirect(http.StatusFound, "/settings/users")
+}

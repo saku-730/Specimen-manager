@@ -47,10 +47,14 @@ func main() {
 		db := c.MustGet("db").(*gorm.DB)
 		users := controllers.GetUsersList(db)
 		projects := controllers.GetProjectsList(db)
+		defaultProject := controllers.GetDefaultProject(db)
+		defaultUser := controllers.GetDefaultUser(db)
 		c.HTML(200, "new.html", gin.H{
 			"Today": time.Now(),
 			"Users": users,
 			"Projects": projects,
+			"DefaultProject": defaultProject,
+			"DefaultUser": defaultUser,
 		})
 	})
 	r.POST("/specimens", controllers.CreateSpecimen)
@@ -86,6 +90,7 @@ func main() {
 		}
 		c.AbortWithStatus(http.StatusBadRequest)
 	})
+	r.POST("/settings/users/:id/set_default", controllers.SetDefaultUser)
 
 	// プロジェクト管理ルート
 	r.GET("/settings/projects", controllers.GetProjects)
@@ -98,6 +103,7 @@ func main() {
 		}
 		c.AbortWithStatus(http.StatusBadRequest)
 	})
+	r.POST("/settings/projects/:id/set_default", controllers.SetDefaultProject)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

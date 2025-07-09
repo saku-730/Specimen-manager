@@ -67,7 +67,11 @@
         <label>和名:</label><br>
         <input type="text" name="JapaneseName" value="{{.JapaneseName}}"><br>
         <label>年齢・成体/幼体:</label><br>
-        <input type="text" name="Age" value="{{.Age}}"><br>
+        <input type="text" name="Age" value="{{.Age}}" list="ageOptions"><br>
+        <datalist id="ageOptions">
+            <option value="成体">
+            <option value="幼体">
+        </datalist><br>
         <label>同定者:</label><br>
         <select name="Identifier">
             <option value=""></option>
