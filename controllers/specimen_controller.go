@@ -65,6 +65,17 @@ func GetUsersList(db *gorm.DB) []models.User {
 	return getUsers(db)
 }
 
+func getProjects(db *gorm.DB) []models.Project {
+	var projects []models.Project
+	db.Find(&projects)
+	return projects
+}
+
+// GetProjectsList はプロジェクトリストを返します (main.goから呼び出し可能)
+func GetProjectsList(db *gorm.DB) []models.Project {
+	return getProjects(db)
+}
+
 func CreateSpecimen(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 

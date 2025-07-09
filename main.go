@@ -19,7 +19,7 @@ func main() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.Specimen{}, &models.Photo{}, &models.User{})
+	db.AutoMigrate(&models.Specimen{}, &models.Photo{}, &models.User{}, &models.Project{})
 
 		r := gin.Default()
 
@@ -27,14 +27,6 @@ func main() {
 	tmpl := template.New("")
 	var errParse error
 	tmpl, errParse = tmpl.ParseGlob("templates/*.html")
-	if errParse != nil {
-		panic(fmt.Sprintf("Failed to parse templates: %v", errParse))
-	}
-	tmpl, errParse = tmpl.ParseGlob("templates/users/*.html")
-	if errParse != nil {
-		panic(fmt.Sprintf("Failed to parse templates: %v", errParse))
-	}
-	tmpl, errParse = tmpl.ParseGlob("templates/settings/*.html")
 	if errParse != nil {
 		panic(fmt.Sprintf("Failed to parse templates: %v", errParse))
 	}
@@ -54,9 +46,11 @@ func main() {
 	r.GET("/specimens/new", func(c *gin.Context) {
 		db := c.MustGet("db").(*gorm.DB)
 		users := controllers.GetUsersList(db)
+		projects := controllers.GetProjectsList(db)
 		c.HTML(200, "new.html", gin.H{
 			"Today": time.Now(),
 			"Users": users,
+			"Projects": projects,
 		})
 	})
 	r.POST("/specimens", controllers.CreateSpecimen)
@@ -88,6 +82,18 @@ func main() {
 		method := c.PostForm("_method")
 		if method == "DELETE" {
 			controllers.DeleteUser(c)
+			return
+		}
+		c.AbortWithStatus(http.StatusBadRequest)
+	})
+
+	// プロジェクト管理ルート
+	r.GET("/settings/projects", controllers.GetProjects)
+	r.POST("/settings/projects", controllers.CreateProject)
+	r.POST("/settings/projects/:id", func(c *gin.Context) {
+		method := c.PostForm("_method")
+		if method == "DELETE" {
+			controllers.DeleteProject(c)
 			return
 		}
 		c.AbortWithStatus(http.StatusBadRequest)

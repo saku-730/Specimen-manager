@@ -76,7 +76,12 @@
             {{end}}
         </select><br>
         <label>プロジェクト名:</label><br>
-        <input type="text" name="ProjectName" value="{{.ProjectName}}"><br>
+        <select name="ProjectName">
+            <option value=""></option>
+            {{range .Projects}}
+            <option value="{{.Name}}" {{if eq .Name $.Specimen.ProjectName}}selected{{end}}>{{.Name}}</option>
+            {{end}}
+        </select><br>
         <label>データ入力日:</label><br>
         <input type="date" name="DataInputDate" value="{{if .DataInputDate}}{{.DataInputDate.Format "2006-01-02"}}{{end}}"><br>
         
