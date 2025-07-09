@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>標本データ入力</title>
+</head>
+<body>
+    <h1>標本データ入力</h1>
+    <form action="/specimens" method="POST" enctype="multipart/form-data" id="specimenForm">
+        <h2>共通</h2>
+        <label>雌雄:</label><br>
+        <input type="text" name="Sex"><br>
+        <label>種名(学名):</label><br>
+        <input type="text" name="SpeciesName"><br>
+        <label>和名:</label><br>
+        <input type="text" name="JapaneseName"><br>
+        <label>年齢・成体/幼体:</label><br>
+        <input type="text" name="Age"><br>
+        <label>同定者:</label><br>
+        <select name="Identifier">
+            <option value=""></option>
+            {{range .Users}}
+            <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        </select><br>
+        <label>プロジェクト名:</label><br>
+        <input type="text" name="ProjectName"><br>
+        <label>データ入力日:</label><br>
+        <input type="date" name="DataInputDate" value="{{.Today.Format "2006-01-02"}}"><br>
+        <label>備考:</label><br>
+        <textarea name="CommonRemarks"></textarea><br>
+
+        <h2>採集・観察</h2>
+        <label>緯度:</label><br>
+        <input type="number" step="any" name="Latitude"><br>
+        <label>経度:</label><br>
+        <input type="number" step="any" name="Longitude"><br>
+        <label>年月日:</label><br>
+        <input type="date" name="Date" value="{{.Today.Format "2006-01-02"}}"><br>
+        <label>時間:</label><br>
+        <input type="number" name="Time"><br>
+        <label>採集方法:</label><br>
+        <input type="text" name="CollectionMethod"><br>
+        <label>採集・観察者:</label><br>
+        <select name="Collector">
+            <option value=""></option>
+            {{range .Users}}
+            <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        </select><br>
+        <label>個体数:</label><br>
+        <input type="number" name="IndividualCount" value="1"><br>
+        <label>天気:</label><br>
+        <input type="text" name="Weather"><br>
+        <label>気温:</label><br>
+        <input type="number" step="0.1" name="Temperature"><br>
+        <label>湿度:</label><br>
+        <input type="number" step="0.1" name="Humidity"><br>
+        <label>降水量:</label><br>
+        <input type="number" step="0.1" name="Precipitation"><br>
+        <label>環境:</label><br>
+        <input type="text" name="Environment"><br>
+        <label>備考:</label><br>
+        <textarea name="CollectionRemarks"></textarea><br>
+
+        <h2>標本 <input type="checkbox" id="toggleSpecimenSection"> <label for="toggleSpecimenSection">標本情報を入力する</label></h2>
+        <div id="specimenSection" style="display: none;">
+            <label>標本作成者:</label><br>
+            <select name="SpecimenCreator">
+            <option value=""></option>
+            {{range .Users}}
+            <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        </select><br>
+            <label>標本種類:</label><br>
+            <input type="text" name="SpecimenType"><br>
+            <label>標本所在地:</label><br>
+            <input type="text" name="SpecimenLocation"><br>
+            <label>標本箱、サンプル番号:</label><br>
+            <input type="text" name="SpecimenBoxID"><br>
+            <label>標本作成日:</label><br>
+            <input type="date" name="SpecimenCreationDate" value="{{.Today.Format "2006-01-02"}}"><br>
+            <label>備考:</label><br>
+            <textarea name="SpecimenRemarks"></textarea><br>
+        </div>
+
+        <h2>写真</h2>
+        <input type="file" name="photos" id="photoUpload" multiple accept="image/*"><br>
+        <div id="imagePreviewContainer"></div>
+
+        <input type="submit" value="登録">
+    </form>
+
+    <p><a href="/">トップページに戻る</a></p>
+
+    <script>
+        document.getElementById('photoUpload').addEventListener('change', function(event) {
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = ''; // Clear previous previews
+
+            const files = event.target.files;
+            if (files) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '200px';
+                            img.style.maxHeight = '200px';
+                            img.style.margin = '5px';
+
+                            const fileName = document.createElement('p');
+                            fileName.textContent = file.name;
+                            fileName.style.fontSize = '0.8em';
+                            fileName.style.textAlign = 'center';
+                            fileName.style.margin = '0';
+
+                            const div = document.createElement('div');
+                            div.style.display = 'inline-block';
+                            div.style.verticalAlign = 'top';
+                            div.style.margin = '10px';
+                            div.appendChild(img);
+                            div.appendChild(fileName);
+
+                            previewContainer.appendChild(div);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
+
+        // Enterキーで次のフィールドに移動する処理 と 標本セクションの表示切り替え
+        document.addEventListener('DOMContentLoaded', function() {
+            // 標本セクションの表示切り替え
+            const toggle = document.getElementById('toggleSpecimenSection');
+            const specimenSection = document.getElementById('specimenSection');
+            if(toggle && specimenSection) {
+                toggle.addEventListener('change', function() {
+                    specimenSection.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+
+            // Enterキーの処理
+            const form = document.getElementById('specimenForm');
+            const focusableElements = form.querySelectorAll('input, select, textarea, button');
+            const focusable = Array.from(focusableElements).filter(el => !el.disabled && el.type !== 'hidden');
+
+            focusable.forEach((element, index) => {
+                element.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                         // テキストエリアの場合はEnterでの改行を許可
+                        if (element.tagName.toLowerCase() === 'textarea') {
+                            return;
+                        }
+                        e.preventDefault();
+                        
+                        // 次のフォーカス可能な要素を探す
+                        let nextElement = null;
+                        for (let i = index + 1; i < focusable.length; i++) {
+                            const el = focusable[i];
+                            // 非表示の要素はスキップ
+                            if (el.offsetParent !== null) {
+                                nextElement = el;
+                                break;
+                            }
+                        }
+
+                        if (nextElement) {
+                            nextElement.focus();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>標本管理サイト</title>
+</head>
+<body>
+    <h1>標本管理サイト</h1>
+    <nav>
+        <ul>
+            <li><a href="/specimens/new">データ入力ページ</a></li>
+            <li><a href="/specimens">一覧検索ページ</a></li>
+            <li><a href="#">設定ページ (未実装)</a></li>
+            <li><a href="#">ユーザー管理ページ (未実装)</a></li>
+        </ul>
+    </nav>
+
+    <h2>最新のデータ入力履歴</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>種名(学名)</th>
+                <th>和名</th>
+                <th>採集者</th>
+                <th>緯度</th>
+                <th>経度</th>
+                <th>年月日</th>
+                <th>時間</th>
+                <th>採集方法</th>
+                <th>個体数</th>
+                <th>天気</th>
+                <th>気温</th>
+                <th>湿度</th>
+                <th>降水量</th>
+                <th>環境</th>
+                <th>標本作成者</th>
+                <th>標本種類</th>
+                <th>標本所在地</th>
+                <th>標本箱、サンプル番号</th>
+                <th>標本作成日</th>
+                <th>雌雄</th>
+                <th>年齢・成体/幼体</th>
+                <th>同定者</th>
+                <th>プロジェクト名</th>
+                <th>詳細</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .LatestEntries}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.SpeciesName}}</td>
+                <td>{{.JapaneseName}}</td>
+                <td>{{.Collector}}</td>
+                <td>{{.Latitude}}</td>
+                <td>{{.Longitude}}</td>
+                <td>{{if .Date}}{{.Date.Format "2006-01-02"}}{{end}}</td>
+                <td>{{.Time}}</td>
+                <td>{{.CollectionMethod}}</td>
+                <td>{{.IndividualCount}}</td>
+                <td>{{.Weather}}</td>
+                <td>{{.Temperature}}</td>
+                <td>{{.Humidity}}</td>
+                <td>{{.Precipitation}}</td>
+                <td>{{.Environment}}</td>
+                <td>{{.SpecimenCreator}}</td>
+                <td>{{.SpecimenType}}</td>
+                <td>{{.SpecimenLocation}}</td>
+                <td>{{.SpecimenBoxID}}</td>
+                <td>{{if .SpecimenCreationDate}}{{.SpecimenCreationDate.Format "2006-01-02"}}{{end}}</td>
+                <td>{{.Sex}}</td>
+                <td>{{.Age}}</td>
+                <td>{{.Identifier}}</td>
+                <td>{{.ProjectName}}</td>
+                <td><a href="/specimens/{{.ID}}">詳細</a></td>
+            </tr>
+            {{else}}
+            <tr>
+                <td colspan="25">まだデータがありません。</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+
+    <h2>入力頻度 (未実装)</h2>
+    <p>Githubの色のグラフのような表示をここに実装予定です。</p>
+</body>
+</html>

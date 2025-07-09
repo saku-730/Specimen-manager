@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ユーザー管理</title>
+</head>
+<body>
+    <h1>ユーザー管理</h1>
+
+    <h2>新規ユーザー追加</h2>
+    <form action="/settings/users" method="POST">
+        <label>ユーザー名:</label>
+        <input type="text" name="name" required>
+        <button type="submit">追加</button>
+    </form>
+
+    <h2>登録済みユーザー</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ユーザー名</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Users}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Name}}</td>
+                <td>
+                    <form action="/settings/users/{{.ID}}" method="POST" onsubmit="return confirm('本当にユーザー {{.Name}} を削除しますか？');" style="display:inline;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+            {{else}}
+            <tr>
+                <td colspan="3">ユーザーは登録されていません。</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+
+    <p><a href="/settings">設定トップに戻る</a></p>
+    <p><a href="/">トップページに戻る</a></p>
+</body>
+</html>

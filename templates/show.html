@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>標本データ詳細</title>
+</head>
+<body>
+    <h1>標本データ詳細</h1>
+    <p><strong>ID:</strong> {{.ID}}</p>
+    <h2>採集・観察</h2>
+    <p><strong>緯度:</strong> {{.Latitude}}</p>
+    <p><strong>経度:</strong> {{.Longitude}}</p>
+    <p><strong>年月日:</strong> {{.Date}}</p>
+    <p><strong>時間:</strong> {{.Time}}</p>
+    <p><strong>採集方法:</strong> {{.CollectionMethod}}</p>
+    <p><strong>採集・観察者:</strong> {{.Collector}}</p>
+    <p><strong>個体数:</strong> {{.IndividualCount}}</p>
+    <p><strong>天気:</b> {{.Weather}}</p>
+    <p><strong>気温:</strong> {{.Temperature}}</p>
+    <p><strong>湿度:</strong> {{.Humidity}}</p>
+    <p><strong>降水量:</strong> {{.Precipitation}}</p>
+    <p><strong>環境:</strong> {{.Environment}}</p>
+    <p><strong>備考:</strong> {{.CollectionRemarks}}</p>
+
+    <h2>標本</h2>
+    <p><strong>標本作成者:</strong> {{.SpecimenCreator}}</p>
+    <p><strong>標本種類:</strong> {{.SpecimenType}}</p>
+    <p><strong>標本所在地:</strong> {{.SpecimenLocation}}</p>
+    <p><strong>標本箱、サンプル番号:</strong> {{.SpecimenBoxID}}</p>
+    <p><strong>標本作成日:</strong> {{.SpecimenCreationDate}}</p>
+    <p><strong>備考:</strong> {{.SpecimenRemarks}}</p>
+
+    <h2>共通</h2>
+    <p><strong>雌雄:</strong> {{.Sex}}</p>
+    <p><strong>種名(学名):</strong> {{.SpeciesName}}</p>
+    <p><strong>和名:</strong> {{.JapaneseName}}</p>
+    <p><strong>年齢・成体/幼体:</strong> {{.Age}}</p>
+    <p><strong>同定者:</strong> {{.Identifier}}</p>
+    <p><strong>プロジェクト名:</strong> {{.ProjectName}}</p>
+    <p><strong>データ入力日:</strong> {{.DataInputDate}}</p>
+    
+    <p><strong>備考:</strong> {{.CommonRemarks}}</p>
+
+    <h2>写真</h2>
+    {{if .Photos}}
+        {{range .Photos}}
+            <img src="{{.Path}}" alt="Specimen Photo" width="200"><br>
+        {{end}}
+    {{else}}
+        <p>写真はありません。</p>
+    {{end}}
+
+    <p>
+        <a href="/specimens">一覧に戻る</a> |
+        <a href="/specimens/{{.ID}}/edit">編集</a>
+    </p>
+    <form action="/specimens/{{.ID}}" method="POST" onsubmit="return confirm('本当にこの標本データを削除しますか？');" style="display:inline;">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit">削除</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>標本データ一覧</title>
+</head>
+<body>
+    <h1>標本データ一覧</h1>
+
+    <form action="/specimens" method="GET">
+        <h2>検索</h2>
+        <label>種名(学名):</label><br>
+        <input type="text" name="species_name" value="{{.SearchParams.SpeciesName}}"><br>
+        <input type="checkbox" name="include_sp" value="true" {{if .SearchParams.IncludeSp}}checked{{end}}> sp.を含む<br>
+
+        <label>和名:</label><br>
+        <input type="text" name="japanese_name" value="{{.SearchParams.JapaneseName}}"><br>
+
+        <label>採集者:</label><br>
+        <input type="text" name="collector" value="{{.SearchParams.Collector}}"><br>
+
+        <label>同定者:</label><br>
+        <input type="text" name="identifier" value="{{.SearchParams.Identifier}}"><br>
+
+        <label>標本作成者:</label><br>
+        <input type="text" name="specimen_creator" value="{{.SearchParams.SpecimenCreator}}"><br>
+
+        <label>緯度:</label><br>
+        <input type="number" step="any" name="latitude" value="{{.SearchParams.Latitude}}"><br>
+        <label>経度:</label><br>
+        <input type="number" step="any" name="longitude" value="{{.SearchParams.Longitude}}"><br>
+
+        <label>プロジェクト名:</label><br>
+        <input type="text" name="project_name" value="{{.SearchParams.ProjectName}}"><br>
+
+        <label>標本箱、サンプル番号:</label><br>
+        <input type="text" name="specimen_box_id" value="{{.SearchParams.SpecimenBoxID}}"><br>
+
+        <label>採集方法:</label><br>
+        <input type="text" name="collection_method" value="{{.SearchParams.CollectionMethod}}"><br>
+
+        <label>標本種類:</label><br>
+        <input type="text" name="specimen_type" value="{{.SearchParams.SpecimenType}}"><br>
+
+        <label>雌雄:</label><br>
+        <input type="text" name="sex" value="{{.SearchParams.Sex}}"><br>
+
+        <label>年齢・成体/幼体:</label><br>
+        <input type="text" name="age" value="{{.SearchParams.Age}}"><br>
+
+        <label>採集年月日:</label><br>
+        <input type="text" name="date" value="{{.SearchParams.Date}}"><br>
+
+        <label>標本作成日:</label><br>
+        <input type="text" name="specimen_creation_date" value="{{.SearchParams.SpecimenCreationDate}}"><br>
+
+        <label>データ入力日:</label><br>
+        <input type="text" name="data_input_date" value="{{.SearchParams.DataInputDate}}"><br>
+
+        <input type="submit" value="検索">
+        <a href="/specimens">検索条件をクリア</a>
+    </form>
+
+    <hr>
+
+    <form action="/specimens/delete" method="POST" id="deleteForm">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
+                    <th>ID</th>
+                    <th>種名(学名)</th>
+                    <th>和名</th>
+                    <th>採集者</th>
+                    <th>緯度</th>
+                    <th>経度</th>
+                    <th>年月日</th>
+                    <th>時間</th>
+                    <th>採集方法</th>
+                    <th>個体数</th>
+                    <th>天気</th>
+                    <th>気温</th>
+                    <th>湿度</th>
+                    <th>降水量</th>
+                    <th>環境</th>
+                    <th>標本作成者</th>
+                    <th>標本種類</th>
+                    <th>標本所在地</th>
+                    <th>標本箱、サンプル番号</th>
+                    <th>標本作成日</th>
+                    <th>雌雄</th>
+                    <th>年齢・成体/幼体</th>
+                    <th>同定者</th>
+                    <th>プロジェクト名</th>
+                    <th>詳細</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Specimens}}
+                <tr>
+                    <td><input type="checkbox" name="ids" value="{{.ID}}" class="specimen-checkbox"></td>
+                    <td>{{.ID}}</td>
+                    <td>{{.SpeciesName}}</td>
+                    <td>{{.JapaneseName}}</td>
+                    <td>{{.Collector}}</td>
+                    <td>{{.Latitude}}</td>
+                    <td>{{.Longitude}}</td>
+                    <td>{{if .Date}}{{.Date.Format "2006-01-02"}}{{end}}</td>
+                    <td>{{.Time}}</td>
+                    <td>{{.CollectionMethod}}</td>
+                    <td>{{.IndividualCount}}</td>
+                    <td>{{.Weather}}</td>
+                    <td>{{.Temperature}}</td>
+                    <td>{{.Humidity}}</td>
+                    <td>{{.Precipitation}}</td>
+                    <td>{{.Environment}}</td>
+                    <td>{{.SpecimenCreator}}</td>
+                    <td>{{.SpecimenType}}</td>
+                    <td>{{.SpecimenLocation}}</td>
+                    <td>{{.SpecimenBoxID}}</td>
+                    <td>{{if .SpecimenCreationDate}}{{.SpecimenCreationDate.Format "2006-01-02"}}{{end}}</td>
+                    <td>{{.Sex}}</td>
+                    <td>{{.Age}}</td>
+                    <td>{{.Identifier}}</td>
+                    <td>{{.ProjectName}}</td>
+                    <td><a href="/specimens/{{.ID}}">詳細</a></td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="26">該当する標本データがありません。</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{if .Specimens}}
+        <button type="submit">選択した項目を削除</button>
+        {{end}}
+    </form>
+
+    <p><a href="/specimens/new">新規標本データ入力</a></p>
+    <p><a href="/">トップページに戻る</a></p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.specimen-checkbox');
+            const deleteForm = document.getElementById('deleteForm');
+
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = selectAll.checked;
+                    });
+                });
+            }
+
+            if (deleteForm) {
+                deleteForm.addEventListener('submit', function(e) {
+                    const checkedCheckboxes = document.querySelectorAll('.specimen-checkbox:checked');
+                    if (checkedCheckboxes.length === 0) {
+                        alert('削除する項目を少なくとも1つ選択してください。');
+                        e.preventDefault(); // フォームの送信を中止
+                        return;
+                    }
+                    if (!confirm('選択した' + checkedCheckboxes.length + '件の項目を本当に削除しますか？')) {
+                        e.preventDefault(); // フォームの送信を中止
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
