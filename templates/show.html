@@ -6,6 +6,17 @@
 <body>
     <h1>標本データ詳細</h1>
     <p><strong>ID:</strong> {{.ID}}</p>
+    <h2>共通</h2>
+    <p><strong>雌雄:</strong> {{.Sex}}</p>
+    <p><strong>種名(学名):</strong> {{.SpeciesName}}</p>
+    <p><strong>和名:</strong> {{.JapaneseName}}</p>
+    <p><strong>年齢・成体/幼体:</strong> {{.Age}}</p>
+    <p><strong>同定者:</strong> {{.Identifier}}</p>
+    <p><strong>プロジェクト名:</strong> {{.ProjectName}}</p>
+    <p><strong>データ入力日:</strong> {{.DataInputDate}}</p>
+    
+    <p><strong>備考:</strong> {{.CommonRemarks}}</p>
+
     <h2>採集・観察</h2>
     <p><strong>緯度:</strong> {{.Latitude}}</p>
     <p><strong>経度:</strong> {{.Longitude}}</p>
@@ -28,17 +39,6 @@
     <p><strong>標本箱、サンプル番号:</strong> {{.SpecimenBoxID}}</p>
     <p><strong>標本作成日:</strong> {{.SpecimenCreationDate}}</p>
     <p><strong>備考:</strong> {{.SpecimenRemarks}}</p>
-
-    <h2>共通</h2>
-    <p><strong>雌雄:</strong> {{.Sex}}</p>
-    <p><strong>種名(学名):</strong> {{.SpeciesName}}</p>
-    <p><strong>和名:</strong> {{.JapaneseName}}</p>
-    <p><strong>年齢・成体/幼体:</strong> {{.Age}}</p>
-    <p><strong>同定者:</strong> {{.Identifier}}</p>
-    <p><strong>プロジェクト名:</strong> {{.ProjectName}}</p>
-    <p><strong>データ入力日:</strong> {{.DataInputDate}}</p>
-    
-    <p><strong>備考:</strong> {{.CommonRemarks}}</p>
 
     <h2>写真</h2>
     {{if .Photos}}

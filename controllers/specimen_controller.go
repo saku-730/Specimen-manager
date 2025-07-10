@@ -360,11 +360,15 @@ func UpdateSpecimen(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	id := c.Param("id")
 
+	fmt.Printf("UpdateSpecimen: Received ID: %s\n", id)
+
 	var specimen models.Specimen
 	if err := db.First(&specimen, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Specimen not found"})
 		return
 	}
+
+	fmt.Printf("UpdateSpecimen: Specimen found with ID: %d\n", specimen.ID)
 
 	var form SpecimenForm
 	if err := c.ShouldBind(&form); err != nil {
@@ -372,7 +376,10 @@ func UpdateSpecimen(c *gin.Context) {
 		return
 	}
 
+	fmt.Printf("UpdateSpecimen: Received form data: %+v\n", form)
+
 	specimen.Latitude = form.Latitude
+
 	specimen.Longitude = form.Longitude
 	specimen.Date = parseDateString(form.Date)
 	specimen.Time = form.Time

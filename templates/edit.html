@@ -5,69 +5,17 @@
 </head>
 <body>
     <h1>標本データ編集</h1>
-    <form action="/specimens/{{.ID}}" method="POST" enctype="multipart/form-data">
+    <form action="/specimens/{{.Specimen.ID}}" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_method" value="PUT">
-        <h2>採集・観察</h2>
-        <label>緯度:</label><br>
-        <input type="number" step="any" name="Latitude" value="{{.Latitude}}"><br>
-        <label>経度:</label><br>
-        <input type="number" step="any" name="Longitude" value="{{.Longitude}}"><br>
-        <label>年月日:</label><br>
-        <input type="date" name="Date" value="{{if .Date}}{{.Date.Format "2006-01-02"}}{{end}}"><br>
-        <label>時間:</label><br>
-        <input type="number" name="Time" value="{{.Time}}"><br>
-        <label>採集方法:</label><br>
-        <input type="text" name="CollectionMethod" value="{{.CollectionMethod}}"><br>
-        <label>採集・観察者:</label><br>
-        <select name="Collector">
-            <option value=""></option>
-            {{range .Users}}
-            <option value="{{.Name}}" {{if eq .Name $.Specimen.Collector}}selected{{end}}>{{.Name}}</option>
-            {{end}}
-        </select><br>
-        <label>個体数:</label><br>
-        <input type="number" name="IndividualCount" value="{{.IndividualCount}}"><br>
-        <label>天気:</label><br>
-        <input type="text" name="Weather" value="{{.Weather}}"><br>
-        <label>気温:</label><br>
-        <input type="number" step="0.1" name="Temperature" value="{{.Temperature}}"><br>
-        <label>湿度:</label><br>
-        <input type="number" step="0.1" name="Humidity" value="{{.Humidity}}"><br>
-        <label>降水量:</label><br>
-        <input type="number" step="0.1" name="Precipitation" value="{{.Precipitation}}"><br>
-        <label>環境:</label><br>
-        <input type="text" name="Environment" value="{{.Environment}}"><br>
-        <label>備考:</label><br>
-        <textarea name="CollectionRemarks">{{.CollectionRemarks}}</textarea><br>
-
-        <h2>標本</h2>
-        <label>標本作成者:</label><br>
-        <select name="SpecimenCreator">
-            <option value=""></option>
-            {{range .Users}}
-            <option value="{{.Name}}" {{if eq .Name $.Specimen.SpecimenCreator}}selected{{end}}>{{.Name}}</option>
-            {{end}}
-        </select><br>
-        <label>標本種類:</label><br>
-        <input type="text" name="SpecimenType" value="{{.SpecimenType}}"><br>
-        <label>標本所在地:</label><br>
-        <input type="text" name="SpecimenLocation" value="{{.SpecimenLocation}}"><br>
-        <label>標本箱、サンプル番号:</label><br>
-        <input type="text" name="SpecimenBoxID" value="{{.SpecimenBoxID}}"><br>
-        <label>標本作成日:</label><br>
-        <input type="date" name="SpecimenCreationDate" value="{{if .SpecimenCreationDate}}{{.SpecimenCreationDate.Format "2006-01-02"}}{{end}}"><br>
-        <label>備考:</label><br>
-        <textarea name="SpecimenRemarks">{{.SpecimenRemarks}}</textarea><br>
-
         <h2>共通</h2>
         <label>雌雄:</label><br>
-        <input type="text" name="Sex" value="{{.Sex}}"><br>
+        <input type="text" name="Sex" value="{{.Specimen.Sex}}"><br>
         <label>種名(学名):</label><br>
-        <input type="text" name="SpeciesName" value="{{.SpeciesName}}"><br>
+        <input type="text" name="SpeciesName" value="{{.Specimen.SpeciesName}}"><br>
         <label>和名:</label><br>
-        <input type="text" name="JapaneseName" value="{{.JapaneseName}}"><br>
+        <input type="text" name="JapaneseName" value="{{.Specimen.JapaneseName}}"><br>
         <label>年齢・成体/幼体:</label><br>
-        <input type="text" name="Age" value="{{.Age}}" list="ageOptions"><br>
+        <input type="text" name="Age" value="{{.Specimen.Age}}" list="ageOptions"><br>
         <datalist id="ageOptions">
             <option value="成体">
             <option value="幼体">
@@ -87,10 +35,62 @@
             {{end}}
         </select><br>
         <label>データ入力日:</label><br>
-        <input type="date" name="DataInputDate" value="{{if .DataInputDate}}{{.DataInputDate.Format "2006-01-02"}}{{end}}"><br>
+        <input type="date" name="DataInputDate" value="{{if .Specimen.DataInputDate}}{{.Specimen.DataInputDate.Format "2006-01-02"}}{{end}}"><br>
         
         <label>備考:</label><br>
-        <textarea name="CommonRemarks">{{.CommonRemarks}}</textarea><br>
+        <textarea name="CommonRemarks">{{.Specimen.CommonRemarks}}</textarea><br>
+
+        <h2>採集・観察</h2>
+        <label>緯度:</label><br>
+        <input type="number" step="any" name="Latitude" value="{{.Specimen.Latitude}}"><br>
+        <label>経度:</label><br>
+        <input type="number" step="any" name="Longitude" value="{{.Specimen.Longitude}}"><br>
+        <label>年月日:</label><br>
+        <input type="date" name="Date" value="{{if .Specimen.Date}}{{.Specimen.Date.Format "2006-01-02"}}{{end}}"><br>
+        <label>時間:</label><br>
+        <input type="number" name="Time" value="{{.Specimen.Time}}"><br>
+        <label>採集方法:</label><br>
+        <input type="text" name="CollectionMethod" value="{{.Specimen.CollectionMethod}}"><br>
+        <label>採集・観察者:</label><br>
+        <select name="Collector">
+            <option value=""></option>
+            {{range .Users}}
+            <option value="{{.Name}}" {{if eq .Name $.Specimen.Collector}}selected{{end}}>{{.Name}}</option>
+            {{end}}
+        </select><br>
+        <label>個体数:</label><br>
+        <input type="number" name="IndividualCount" value="{{.Specimen.IndividualCount}}"><br>
+        <label>天気:</label><br>
+        <input type="text" name="Weather" value="{{.Specimen.Weather}}"><br>
+        <label>気温:</label><br>
+        <input type="number" step="0.1" name="Temperature" value="{{.Specimen.Temperature}}"><br>
+        <label>湿度:</label><br>
+        <input type="number" step="0.1" name="Humidity" value="{{.Specimen.Humidity}}"><br>
+        <label>降水量:</label><br>
+        <input type="number" step="0.1" name="Precipitation" value="{{.Specimen.Precipitation}}"><br>
+        <label>環境:</label><br>
+        <input type="text" name="Environment" value="{{.Specimen.Environment}}"><br>
+        <label>備考:</label><br>
+        <textarea name="CollectionRemarks">{{.Specimen.CollectionRemarks}}</textarea><br>
+
+        <h2>標本</h2>
+        <label>標本作成者:</label><br>
+        <select name="SpecimenCreator">
+            <option value=""></option>
+            {{range .Users}}
+            <option value="{{.Name}}" {{if eq .Name $.Specimen.SpecimenCreator}}selected{{end}}>{{.Name}}</option>
+            {{end}}
+        </select><br>
+        <label>標本種類:</label><br>
+        <input type="text" name="SpecimenType" value="{{.Specimen.SpecimenType}}"><br>
+        <label>標本所在地:</label><br>
+        <input type="text" name="SpecimenLocation" value="{{.Specimen.SpecimenLocation}}"><br>
+        <label>標本箱、サンプル番号:</label><br>
+        <input type="text" name="SpecimenBoxID" value="{{.Specimen.SpecimenBoxID}}"><br>
+        <label>標本作成日:</label><br>
+        <input type="date" name="SpecimenCreationDate" value="{{if .Specimen.SpecimenCreationDate}}{{.Specimen.SpecimenCreationDate.Format "2006-01-02"}}{{end}}"><br>
+        <label>備考:</label><br>
+        <textarea name="SpecimenRemarks">{{.Specimen.SpecimenRemarks}}</textarea><br>
 
         <h2>写真</h2>
         {{if .Photos}}
