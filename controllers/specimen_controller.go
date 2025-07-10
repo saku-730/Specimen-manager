@@ -103,6 +103,7 @@ func CreateSpecimen(c *gin.Context) {
 		return
 	}
 
+
 	specimen := models.Specimen{
 		Latitude:           form.Latitude,
 		Longitude:          form.Longitude,
@@ -168,6 +169,55 @@ func CreateSpecimen(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save photo record"})
 			return
 		}
+	}
+
+	// 連続入力モードがオンの場合、直前のデータを引き継いで再表示
+	if c.PostForm("continuousInputMode") == "on" {
+		users := GetUsersList(db)
+		projects := GetProjectsList(db)
+
+		// 登録された標本のデータをフォームにセット
+		form.Latitude = specimen.Latitude
+		form.Longitude = specimen.Longitude
+		if specimen.Date != nil {
+			form.Date = specimen.Date.Format("2006-01-02")
+		}
+		form.Time = specimen.Time
+		form.CollectionMethod = specimen.CollectionMethod
+		form.Collector = specimen.Collector
+		form.IndividualCount = specimen.IndividualCount
+		form.Weather = specimen.Weather
+		form.Temperature = specimen.Temperature
+		form.Humidity = specimen.Humidity
+		form.Precipitation = specimen.Precipitation
+		form.Environment = specimen.Environment
+		form.CollectionRemarks = specimen.CollectionRemarks
+		form.SpecimenCreator = specimen.SpecimenCreator
+		form.SpecimenType = specimen.SpecimenType
+		form.SpecimenLocation = specimen.SpecimenLocation
+		form.SpecimenBoxID = specimen.SpecimenBoxID
+		if specimen.SpecimenCreationDate != nil {
+			form.SpecimenCreationDate = specimen.SpecimenCreationDate.Format("2006-01-02")
+		}
+		form.SpecimenRemarks = specimen.SpecimenRemarks
+		form.Sex = specimen.Sex
+		form.SpeciesName = specimen.SpeciesName
+		form.JapaneseName = specimen.JapaneseName
+		form.Age = specimen.Age
+		form.Identifier = specimen.Identifier
+		form.ProjectName = specimen.ProjectName
+		if specimen.DataInputDate != nil {
+			form.DataInputDate = specimen.DataInputDate.Format("2006-01-02")
+		}
+		form.CommonRemarks = specimen.CommonRemarks
+
+		c.HTML(http.StatusOK, "new.html", gin.H{
+			"Users":    users,
+			"Projects": projects,
+			"Form":     form, // フォームデータをテンプレートに渡す
+			"ContinuousInputModeChecked": true, // 連続入力モードがオン
+		})
+		return
 	}
 
 	c.Redirect(http.StatusFound, "/specimens/new")

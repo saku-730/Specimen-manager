@@ -5,17 +5,17 @@
 </head>
 <body>
     <h1>標本データ入力</h1>
-    <input type="checkbox" id="continuousInputMode"> <label for="continuousInputMode">連続入力モード</label>
     <form action="/specimens" method="POST" enctype="multipart/form-data" id="specimenForm">
+        <input type="checkbox" id="continuousInputMode" name="continuousInputMode" {{if .ContinuousInputModeChecked}}checked{{end}}> <label for="continuousInputMode">連続入力モード</label><br><br>
         <h2>共通</h2>
         <label>雌雄:</label><br>
-        <input type="text" name="Sex"><br>
+        <input type="text" name="Sex" value="{{.Form.Sex}}"><br>
         <label>種名(学名):</label><br>
-        <input type="text" name="SpeciesName"><br>
+        <input type="text" name="SpeciesName" value="{{.Form.SpeciesName}}"><br>
         <label>和名:</label><br>
-        <input type="text" name="JapaneseName"><br>
+        <input type="text" name="JapaneseName" value="{{.Form.JapaneseName}}"><br>
         <label>年齢・成体/幼体:</label><br>
-        <input type="text" name="Age" list="ageOptions"><br>
+        <input type="text" name="Age" list="ageOptions" value="{{.Form.Age}}"><br>
         <datalist id="ageOptions">
             <option value="成体">
             <option value="幼体">
@@ -24,53 +24,53 @@
         <select name="Identifier">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if eq .Name $.Form.Identifier}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
         <label>プロジェクト名:</label><br>
         <select name="ProjectName">
             <option value=""></option>
             {{range .Projects}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if eq .Name $.Form.ProjectName}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
         <label>データ入力日:</label><br>
-        <input type="date" name="DataInputDate"><br>
+        <input type="date" name="DataInputDate" value="{{.Form.DataInputDate}}"><br>
         <label>備考:</label><br>
-        <textarea name="CommonRemarks"></textarea><br>
+        <textarea name="CommonRemarks">{{.Form.CommonRemarks}}</textarea><br>
 
         <h2>採集・観察</h2>
         <label>緯度:</label><br>
-        <input type="number" step="any" name="Latitude"><br>
+        <input type="number" step="any" name="Latitude" value="{{.Form.Latitude}}"><br>
         <label>経度:</label><br>
-        <input type="number" step="any" name="Longitude"><br>
+        <input type="number" step="any" name="Longitude" value="{{.Form.Longitude}}"><br>
         <label>年月日:</label><br>
-        <input type="date" name="Date"><br>
+        <input type="date" name="Date" value="{{.Form.Date}}"><br>
         <label>時間:</label><br>
-        <input type="number" name="Time"><br>
+        <input type="number" name="Time" value="{{.Form.Time}}"><br>
         <label>採集方法:</label><br>
-        <input type="text" name="CollectionMethod"><br>
+        <input type="text" name="CollectionMethod" value="{{.Form.CollectionMethod}}"><br>
         <label>採集・観察者:</label><br>
         <select name="Collector">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if eq .Name $.Form.Collector}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
         <label>個体数:</label><br>
-        <input type="number" name="IndividualCount"><br>
+        <input type="number" name="IndividualCount" value="{{.Form.IndividualCount}}"><br>
         <label>天気:</label><br>
-        <input type="text" name="Weather"><br>
+        <input type="text" name="Weather" value="{{.Form.Weather}}"><br>
         <label>気温:</label><br>
-        <input type="number" step="0.1" name="Temperature"><br>
+        <input type="number" step="0.1" name="Temperature" value="{{.Form.Temperature}}"><br>
         <label>湿度:</label><br>
-        <input type="number" step="0.1" name="Humidity"><br>
+        <input type="number" step="0.1" name="Humidity" value="{{.Form.Humidity}}"><br>
         <label>降水量:</label><br>
-        <input type="number" step="0.1" name="Precipitation"><br>
+        <input type="number" step="0.1" name="Precipitation" value="{{.Form.Precipitation}}"><br>
         <label>環境:</label><br>
-        <input type="text" name="Environment"><br>
+        <input type="text" name="Environment" value="{{.Form.Environment}}"><br>
         <label>備考:</label><br>
-        <textarea name="CollectionRemarks"></textarea><br>
+        <textarea name="CollectionRemarks">{{.Form.CollectionRemarks}}</textarea><br>
 
         <h2>標本
             <input type="radio" id="specimenInputYes" name="specimenInput" value="yes" checked> <label for="specimenInputYes">入力する</label>
@@ -81,19 +81,19 @@
             <select name="SpecimenCreator">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}">{{.Name}}</option>
+            <option value="{{.Name}}" {{if eq .Name $.Form.SpecimenCreator}}selected{{end}}>{{.Name}}</option>
             {{end}}
         </select><br>
             <label>標本種類:</label><br>
-            <input type="text" name="SpecimenType"><br>
+            <input type="text" name="SpecimenType" value="{{.Form.SpecimenType}}"><br>
             <label>標本所在地:</label><br>
-            <input type="text" name="SpecimenLocation"><br>
+            <input type="text" name="SpecimenLocation" value="{{.Form.SpecimenLocation}}"><br>
             <label>標本箱、サンプル番号:</label><br>
-            <input type="text" name="SpecimenBoxID"><br>
+            <input type="text" name="SpecimenBoxID" value="{{.Form.SpecimenBoxID}}"><br>
             <label>標本作成日:</label><br>
-            <input type="date" name="SpecimenCreationDate"><br>
+            <input type="date" name="SpecimenCreationDate" value="{{.Form.SpecimenCreationDate}}"><br>
             <label>備考:</label><br>
-            <textarea name="SpecimenRemarks"></textarea><br>
+            <textarea name="SpecimenRemarks">{{.Form.SpecimenRemarks}}</textarea><br>
         </div>
 
         <h2>写真</h2>
@@ -176,49 +176,12 @@
                 updateSpecimenSectionVisibility();
             }
 
-            // 連続入力モードのロジック
+            // 連続入力モードのロジック (サーバーサイドで処理されるため、クライアントサイドのlocalStorageロジックは不要)
             const continuousInputModeCheckbox = document.getElementById('continuousInputMode');
-            const fieldsToRetain = [
-                'Identifier', 'ProjectName', 'Latitude', 'Longitude', 
-                'Date', 'DataInputDate', 'Collector', 'SpecimenCreator'
-            ];
-
-            // チェックボックスの状態をlocalStorageから復元
-            const continuousModeKey = 'continuousInputModeChecked';
-            if (localStorage.getItem(continuousModeKey) === 'true') {
-                continuousInputModeCheckbox.checked = true;
-            }
-
-            // ページロード時に値をロード (チェックボックスの状態に依存)
-            if (continuousInputModeCheckbox.checked) {
-                fieldsToRetain.forEach(fieldName => {
-                    const field = document.querySelector(`[name="${fieldName}"]`);
-                    if (field && localStorage.getItem(`continuousInput_${fieldName}`)) {
-                        field.value = localStorage.getItem(`continuousInput_${fieldName}`);
-                    }
-                });
-            }
-
-            // チェックボックスの状態をlocalStorageに保存
+            // チェックボックスの状態をフォーム送信時に維持するための処理
             continuousInputModeCheckbox.addEventListener('change', function() {
-                localStorage.setItem(continuousModeKey, this.checked);
-            });
-
-            // フォーム送信時に値を保存
-            document.getElementById('specimenForm').addEventListener('submit', function(event) {
-                if (continuousInputModeCheckbox.checked) {
-                    fieldsToRetain.forEach(fieldName => {
-                        const field = document.querySelector(`[name="${fieldName}"]`);
-                        if (field) {
-                            localStorage.setItem(`continuousInput_${fieldName}`, field.value);
-                        }
-                    });
-                } else {
-                    // 連続入力モードでない場合は保存された値をクリア
-                    fieldsToRetain.forEach(fieldName => {
-                        localStorage.removeItem(`continuousInput_${fieldName}`);
-                    });
-                }
+                // 特にクライアントサイドで何かを保存する必要はないが、
+                // フォーム送信時にこのチェックボックスの状態がサーバーに送られるようにする
             });
 
             // Enterキーの処理

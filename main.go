@@ -55,6 +55,8 @@ func main() {
 			"Projects": projects,
 			"DefaultProject": defaultProject,
 			"DefaultUser": defaultUser,
+			"Form": controllers.SpecimenForm{}, // 空のフォームデータを渡す
+			"ContinuousInputModeChecked": false, // 初期状態ではチェックなし
 		})
 	})
 	r.POST("/specimens", controllers.CreateSpecimen)
