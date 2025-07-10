@@ -24,18 +24,18 @@
         <select name="Identifier">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}" {{if and $.DefaultUser (eq .Name $.DefaultUser.Name)}}selected{{end}}>{{.Name}}</option>
+            <option value="{{.Name}}">{{.Name}}</option>
             {{end}}
         </select><br>
         <label>プロジェクト名:</label><br>
         <select name="ProjectName">
             <option value=""></option>
             {{range .Projects}}
-            <option value="{{.Name}}" {{if and $.DefaultProject (eq .Name $.DefaultProject.Name)}}selected{{end}}>{{.Name}}</option>
+            <option value="{{.Name}}">{{.Name}}</option>
             {{end}}
         </select><br>
         <label>データ入力日:</label><br>
-        <input type="date" name="DataInputDate" value="{{.Today.Format "2006-01-02"}}"><br>
+        <input type="date" name="DataInputDate"><br>
         <label>備考:</label><br>
         <textarea name="CommonRemarks"></textarea><br>
 
@@ -45,7 +45,7 @@
         <label>経度:</label><br>
         <input type="number" step="any" name="Longitude"><br>
         <label>年月日:</label><br>
-        <input type="date" name="Date" value="{{.Today.Format "2006-01-02"}}"><br>
+        <input type="date" name="Date"><br>
         <label>時間:</label><br>
         <input type="number" name="Time"><br>
         <label>採集方法:</label><br>
@@ -54,11 +54,11 @@
         <select name="Collector">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}" {{if and $.DefaultUser (eq .Name $.DefaultUser.Name)}}selected{{end}}>{{.Name}}</option>
+            <option value="{{.Name}}">{{.Name}}</option>
             {{end}}
         </select><br>
         <label>個体数:</label><br>
-        <input type="number" name="IndividualCount" value="1"><br>
+        <input type="number" name="IndividualCount"><br>
         <label>天気:</label><br>
         <input type="text" name="Weather"><br>
         <label>気温:</label><br>
@@ -72,13 +72,16 @@
         <label>備考:</label><br>
         <textarea name="CollectionRemarks"></textarea><br>
 
-        <h2>標本 <input type="checkbox" id="toggleSpecimenSection"> <label for="toggleSpecimenSection">標本情報を入力する</label></h2>
+        <h2>標本
+            <input type="radio" id="specimenInputYes" name="specimenInput" value="yes" checked> <label for="specimenInputYes">入力する</label>
+            <input type="radio" id="specimenInputNo" name="specimenInput" value="no"> <label for="specimenInputNo">入力しない</label>
+        </h2>
         <div id="specimenSection" style="display: none;">
             <label>標本作成者:</label><br>
             <select name="SpecimenCreator">
             <option value=""></option>
             {{range .Users}}
-            <option value="{{.Name}}" {{if and $.DefaultUser (eq .Name $.DefaultUser.Name)}}selected{{end}}>{{.Name}}</option>
+            <option value="{{.Name}}">{{.Name}}</option>
             {{end}}
         </select><br>
             <label>標本種類:</label><br>
@@ -88,7 +91,7 @@
             <label>標本箱、サンプル番号:</label><br>
             <input type="text" name="SpecimenBoxID"><br>
             <label>標本作成日:</label><br>
-            <input type="date" name="SpecimenCreationDate" value="{{.Today.Format "2006-01-02"}}"><br>
+            <input type="date" name="SpecimenCreationDate"><br>
             <label>備考:</label><br>
             <textarea name="SpecimenRemarks"></textarea><br>
         </div>
@@ -144,12 +147,33 @@
         // Enterキーで次のフィールドに移動する処理 と 標本セクションの表示切り替え
         document.addEventListener('DOMContentLoaded', function() {
             // 標本セクションの表示切り替え
-            const toggle = document.getElementById('toggleSpecimenSection');
+            const specimenInputYes = document.getElementById('specimenInputYes');
+            const specimenInputNo = document.getElementById('specimenInputNo');
             const specimenSection = document.getElementById('specimenSection');
-            if(toggle && specimenSection) {
-                toggle.addEventListener('change', function() {
-                    specimenSection.style.display = this.checked ? 'block' : 'none';
-                });
+
+            function clearSpecimenFields() {
+                document.querySelector('[name="SpecimenCreator"]').value = '';
+                document.querySelector('[name="SpecimenType"]').value = '';
+                document.querySelector('[name="SpecimenLocation"]').value = '';
+                document.querySelector('[name="SpecimenBoxID"]').value = '';
+                document.querySelector('[name="SpecimenCreationDate"]').value = '';
+                document.querySelector('[name="SpecimenRemarks"]').value = '';
+            }
+
+            function updateSpecimenSectionVisibility() {
+                if (specimenInputYes.checked) {
+                    specimenSection.style.display = 'block';
+                } else {
+                    specimenSection.style.display = 'none';
+                    clearSpecimenFields(); // Clear fields when "入力しない" is selected
+                }
+            }
+
+            if (specimenInputYes && specimenInputNo && specimenSection) {
+                specimenInputYes.addEventListener('change', updateSpecimenSectionVisibility);
+                specimenInputNo.addEventListener('change', updateSpecimenSectionVisibility);
+                // 初期表示
+                updateSpecimenSectionVisibility();
             }
 
             // 連続入力モードのロジック
